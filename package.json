@@ -1,5 +1,5 @@
 {
-  "author": "Andrew Abramov <andrewblond@yandex.com>",
+  "author": "Andrew Abramov <mail@blond.im>",
   "description": "BEM.I18N localization for BH templates",
   "name": "enb-bh-i18n",
   "version": "0.0.1",
@@ -15,11 +15,7 @@
   "contributors": [
     {
       "name": "Andrew Abramov",
-      "email": "andrewblond@yandex.com"
-    },
-    {
-      "name": "Marat Dulin",
-      "email": "mdevils@yandex.ru"
+      "email": "mail@blond.im"
     },
     {
       "name": "Andrey Kuznetsov",
