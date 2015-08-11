@@ -81,4 +81,4 @@ nodeConfig.addTech(require('enb-bh-i18n/techs/bh-сommonjs-i18n'));
 Лицензия
 --------
 
-© 2014 YANDEX LLC. Код лицензирован [Mozilla Public License 2.0](LICENSE.txt).
+© 2015 YANDEX LLC. Код лицензирован [Mozilla Public License 2.0](LICENSE.txt).
