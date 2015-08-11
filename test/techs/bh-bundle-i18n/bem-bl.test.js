@@ -11,7 +11,7 @@ var EOL = require('os').EOL,
     bhCoreFilename = require.resolve('enb-bh/node_modules/bh/lib/bh.js'),
     bhCoreContents = fs.readFileSync(bhCoreFilename);
 
-describe('bh-bundle-i18n v1', function () {
+describe('bh-bundle-i18n for bem-bl', function () {
     before(function () {
         var filename = path.resolve('./test/fixtures/bem-core/common.blocks/i-bem/__i18n/i-bem__i18n.i18n/core.js');
         core = fs.readFileSync(path.resolve(filename), { encoding: 'utf-8' });
@@ -132,11 +132,13 @@ describe('bh-bundle-i18n v1', function () {
             var bundle = new MockNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bh.lang.js'),
                 basename = 'bundle.keysets.lang.js',
-                filename = path.resolve('bundle', basename);
+                relPath = path.join('bundle', basename),
+                cacheKey = 'keysets-file-' + relPath,
+                filename = path.resolve(relPath);
 
             dropRequireCache(require, filename);
             require(filename);
-            cache.cacheFileInfo('keysets-file-' + basename, filename);
+            cache.cacheFileInfo(cacheKey, filename);
 
             var scheme = {
                 blocks: {
@@ -197,11 +199,13 @@ describe('bh-bundle-i18n v1', function () {
             var bundle = new MockNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bh.lang.js'),
                 basename = 'bundle.keysets.lang.js',
-                filename = path.resolve('bundle', basename);
+                relPath = path.join('bundle', basename),
+                cacheKey = 'keysets-file-' + relPath,
+                filename = path.resolve(relPath);
 
             dropRequireCache(require, filename);
             require(filename);
-            cache.cacheFileInfo('keysets-file-' + basename, filename);
+            cache.cacheFileInfo(cacheKey, filename);
 
             var scheme = {
                 blocks: {

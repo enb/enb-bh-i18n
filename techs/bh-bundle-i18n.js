@@ -1,9 +1,6 @@
 var vow = require('vow'),
-    path = require('path'),
-    asyncRequire = require('enb/lib/fs/async-require'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
     keysets = require('enb-bem-i18n/lib/keysets'),
-    compile = require('enb-bem-i18n/lib/compile');
+    compileI18N = require('enb-bem-i18n/lib/compile');
 
 /**
  * @class BHBundleI18nTech
@@ -71,31 +68,16 @@ module.exports = require('enb-bh/techs/bh-bundle').buildFlow()
     .defineRequiredOption('lang')
     .useFileList(['bh.js'])
     .useSourceFilename('keysetsFile', '?.keysets.{lang}.js')
-    .builder(function (templateFiles, keysetsFilename) {
-        var cache = this.node.getNodeCache(this._target),
-            cacheKey = 'keysets-file-' + path.basename(keysetsFilename),
-            promises = [this._compileBH(templateFiles)];
-
-        if (cache.needRebuildFile(cacheKey, keysetsFilename)) {
-            dropRequireCache(require, keysetsFilename);
-            promises.push(asyncRequire(keysetsFilename)
-                .then(function (keysets) {
-                    cache.cacheFileInfo(cacheKey, keysetsFilename);
-
-                    return keysets;
-                }));
-        } else {
-            promises.push(asyncRequire(keysetsFilename));
-        }
-
-        return vow.all(promises)
-            .spread(function (bh, sources) {
-                var parsed = keysets.parse(sources);
-
+    .builder(function (fileList, keysetsFilename) {
+        return vow.all([
+                this._compileBH(fileList),
+                this._compileI18N(keysetsFilename),
+            ], this)
+            .spread(function (bhCode, i18nCode) {
                 return [
-                    bh,
+                    bhCode,
                     '(function () {',
-                    '    var __i18n__ = ' + compile(parsed, this._lang) + ',',
+                    '    var __i18n__ = ' + i18nCode + ',',
                     '        defineAsGlobal = true;',
                     '',
                     '    // CommonJS',
@@ -121,9 +103,51 @@ module.exports = require('enb-bh/techs/bh-bundle').buildFlow()
             });
     })
     .methods({
-        _compileBH: function (files) {
-            return this._readTemplates(files)
+        /**
+         * Compiles BH module.
+         *
+         * @param {FileList} fileList — objects that contain file information.
+         * @returns {Promise}
+         * @private
+         */
+        _compileBH: function (fileList) {
+            return this._readTemplates(fileList)
                 .then(this._compile.bind(this));
+        },
+        /**
+         * Compiles i18n module.
+         *
+         * Wraps compiled code for usage with different modular systems.
+         *
+         * @param {String} keysetsFilename — path to file with keysets..
+         * @returns {Promise}
+         * @private
+         */
+        _compileI18N: function (keysetsFilename) {
+            return this._readKeysetsFile(keysetsFilename)
+                .then(function (keysetsSource) {
+                    var parsed = keysets.parse(keysetsSource),
+                        opts = {
+                            version: parsed.version,
+                            language: this._lang
+                        };
+
+                    return compileI18N(parsed.core, parsed.keysets, opts);
+                });
+        },
+        /**
+         * Reads file with keysets.
+         *
+         * @param {String} filename — path to file with keysets.
+         * @returns {Promise}
+         * @private
+         */
+        _readKeysetsFile: function (filename) {
+            var node = this.node,
+                root = node.getRootDir(),
+                cache = node.getNodeCache(this._target);
+
+            return keysets.read(filename, cache, root);
         }
     })
     .createTech();

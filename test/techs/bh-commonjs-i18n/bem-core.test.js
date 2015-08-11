@@ -6,12 +6,12 @@ var EOL = require('os').EOL,
     MockNode = require('mock-enb/lib/mock-node'),
     FileList = require('enb/lib/file-list'),
     dropRequireCache = require('enb/lib/fs/drop-require-cache'),
-    Tech = require('../../../techs/bh-bundle-i18n'),
+    Tech = require('../../../techs/bh-commonjs-i18n'),
     core = require('../../fixtures/bem-core-v3/common.blocks/i18n/i18n.i18n.js').i18n.i18n,
     bhCoreFilename = require.resolve('enb-bh/node_modules/bh/lib/bh.js'),
     bhCoreContents = fs.readFileSync(bhCoreFilename);
 
-describe('bh-bundle-i18n v2', function () {
+describe('bh-commonjs-i18n for bem-core', function () {
     afterEach(function () {
         mock.restore();
     });
@@ -144,20 +144,22 @@ describe('bh-bundle-i18n v2', function () {
             var bundle = new MockNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bh.lang.js'),
                 basename = 'bundle.keysets.lang.js',
-                filename = path.resolve('bundle', basename);
+                relPath = path.join('bundle', basename),
+                cacheKey = 'keysets-file-' + relPath,
+                filename = path.resolve(relPath);
 
             dropRequireCache(require, filename);
             require(filename);
-            cache.cacheFileInfo('keysets-file-' + basename, filename);
+            cache.cacheFileInfo(cacheKey, filename);
 
             var scheme = {
                 blocks: {
-                    'block.bh.js': [
+                    'block.bh.js': bhWrap([
                         'bh.match("block", function (ctx, json) {',
                         '    var val = bh.lib.i18n(json.scope, json.key, json.params);',
                         '    ctx.content(val)',
                         '});'
-                    ].join(EOL)
+                    ].join(EOL))
                 },
                 bundle: {
                     'bundle.keysets.lang.js': mock.file({
@@ -209,20 +211,22 @@ describe('bh-bundle-i18n v2', function () {
             var bundle = new MockNode('bundle'),
                 cache = bundle.getNodeCache('bundle.bh.lang.js'),
                 basename = 'bundle.keysets.lang.js',
-                filename = path.resolve('bundle', basename);
+                relPath = path.join('bundle', basename),
+                cacheKey = 'keysets-file-' + relPath,
+                filename = path.resolve(relPath);
 
             dropRequireCache(require, filename);
             require(filename);
-            cache.cacheFileInfo('keysets-file-' + basename, filename);
+            cache.cacheFileInfo(cacheKey, filename);
 
             var scheme = {
                 blocks: {
-                    'block.bh.js': [
+                    'block.bh.js': bhWrap([
                         'bh.match("block", function (ctx, json) {',
                         '    var val = bh.lib.i18n(json.scope, json.key, json.params);',
                         '    ctx.content(val)',
                         '});'
-                    ].join(EOL)
+                    ].join(EOL))
                 },
                 bundle: {
                     'bundle.keysets.lang.js': mock.file({
@@ -260,15 +264,19 @@ describe('bh-bundle-i18n v2', function () {
     });
 });
 
+function bhWrap(str) {
+    return 'module.exports = function(bh) {' + str + '};';
+}
+
 function build(keysets) {
     var scheme = {
         blocks: {
-            'block.bh.js': [
+            'block.bh.js': bhWrap([
                 'bh.match("block", function (ctx, json) {',
                 '    var val = bh.lib.i18n(json.scope, json.key, json.params);',
                 '    ctx.content(val)',
                 '});'
-            ].join(EOL)
+            ].join(EOL))
         },
         bundle: {
             'bundle.keysets.lang.js': serialize(keysets)
