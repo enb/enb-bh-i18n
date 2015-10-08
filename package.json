@@ -2,7 +2,7 @@
   "author": "Andrew Abramov <mail@blond.im>",
   "description": "BEM.I18N localization for BH templates",
   "name": "enb-bh-i18n",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
   "repository": "git://github.com/enb-bem/enb-bh-i18n",
   "homepage": "https://github.com/enb-bem/enb-bh-i18n",
   "bugs": "https://github.com/enb-bem/enb-bh-i18n/issues",
