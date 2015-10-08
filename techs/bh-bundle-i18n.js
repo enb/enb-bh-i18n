@@ -37,18 +37,18 @@ var vow = require('vow'),
  * @param {String}      [options.keysetsFile='?.keysets.{lang}.js']    Path to a source keysets file.
  *
  * @example
- * var BHBundleI18nTech = require('enb-bh/techs/bh-bundle'),
+ * var BHBundleI18nTech = require('enb-bh-i18n/techs/bh-bundle-i18n'),
  *     FileProvideTech = require('enb/techs/file-provider'),
- *     bem = require('enb-bem-techs');
+ *     bemTechs = require('enb-bem-techs');
  *
  * module.exports = function(config) {
  *     config.node('bundle', function(node) {
  *         // get FileList
  *         node.addTechs([
  *             [FileProvideTech, { target: '?.bemdecl.js' }],
- *             [bem.levels, levels: ['blocks']],
- *             bem.deps,
- *             bem.files
+ *             [bemTechs.levels, { levels: ['blocks'] }],
+ *             [bemTechs.deps],
+ *             [bemTechs.files]
  *         ]);
  *
  *         // collect and merge keysets files into bundle
