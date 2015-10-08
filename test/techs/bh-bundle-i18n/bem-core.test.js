@@ -5,7 +5,8 @@ var EOL = require('os').EOL,
     serializeJS = require('serialize-javascript'),
     MockNode = require('mock-enb/lib/mock-node'),
     FileList = require('enb/lib/file-list'),
-    dropRequireCache = require('enb/lib/fs/drop-require-cache'),
+    loadDirSync = require('mock-enb/utils/dir-utils').loadDirSync,
+    clearRequire = require('clear-require'),
     Tech = require('../../../techs/bh-bundle-i18n'),
     core = require('../../fixtures/bem-core-v3/common.blocks/i18n/i18n.i18n.js').i18n.i18n,
     bhCoreFilename = require.resolve('enb-bh/node_modules/bh/lib/bh.js'),
@@ -148,7 +149,7 @@ describe('bh-bundle-i18n for bem-core', function () {
                 cacheKey = 'keysets-file-' + relPath,
                 filename = path.resolve(relPath);
 
-            dropRequireCache(require, filename);
+            clearRequire(filename);
             require(filename);
             cache.cacheFileInfo(cacheKey, filename);
 
@@ -178,7 +179,7 @@ describe('bh-bundle-i18n for bem-core', function () {
 
             var fileList = new FileList();
 
-            fileList.loadFromDirSync('blocks');
+            fileList.addFiles(loadDirSync('blocks'));
 
             bundle.provideTechData('?.files', fileList);
 
@@ -215,7 +216,7 @@ describe('bh-bundle-i18n for bem-core', function () {
                 cacheKey = 'keysets-file-' + relPath,
                 filename = path.resolve(relPath);
 
-            dropRequireCache(require, filename);
+            clearRequire(filename);
             require(filename);
             cache.cacheFileInfo(cacheKey, filename);
 
@@ -245,7 +246,7 @@ describe('bh-bundle-i18n for bem-core', function () {
 
             var fileList = new FileList();
 
-            fileList.loadFromDirSync('blocks');
+            fileList.addFiles(loadDirSync('blocks'));
 
             bundle.provideTechData('?.files', fileList);
 
@@ -286,7 +287,7 @@ function build(keysets) {
     var bundle = new MockNode('bundle'),
         fileList = new FileList();
 
-    fileList.loadFromDirSync('blocks');
+    fileList.addFiles(loadDirSync('blocks'));
 
     bundle.provideTechData('?.files', fileList);
 
