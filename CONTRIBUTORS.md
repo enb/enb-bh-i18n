@@ -10,7 +10,7 @@
 Контрибьютеры
 -------------
 
-Список контрибьютеров данного проекта доступен по ссылке https://github.com/enb-bem/enb-bh-i18n/graphs/contributors.
+Список контрибьютеров данного проекта доступен по ссылке https://github.com/enb/enb-bh-i18n/graphs/contributors.
 
 Вы так же можете получить его с помощью команды `git log --pretty=format:"%an <%ae>" | sort -u`.
 
